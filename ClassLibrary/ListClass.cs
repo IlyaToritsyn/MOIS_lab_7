@@ -13,7 +13,7 @@ namespace ClassLibrary
         /// <summary>
         /// Класс элементов двунаправленного линейного списка.
         /// </summary>
-        private class Element
+        public class Element
         {
             /// <summary>
             /// След. элемент.
@@ -45,9 +45,6 @@ namespace ClassLibrary
             }
         }
 
-        Element head = null;
-        Element last = null;
-
         /// <summary>
         /// Подсчёт количества элементов в деке.
         /// </summary>
@@ -56,7 +53,7 @@ namespace ClassLibrary
             get
             {
                 int count;
-                Element t = head;
+                Element t = Head;
 
                 for (count = 0; t != null; count++)
                 {
@@ -67,13 +64,17 @@ namespace ClassLibrary
             }
         }
 
+        public Element Head { get; private set; } = null;
+
+        public Element Last { get; private set; } = null;
+
         /// <summary>
         /// Перебор элементов двунаправленного линейного списка.
         /// </summary>
         /// <returns>Элементы двунаправленного линейного списка.</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            var tmp = head;
+            var tmp = Head;
 
             while (tmp != null)
             {
@@ -100,9 +101,9 @@ namespace ClassLibrary
         {
             string str = "";
 
-            if (head != null)
+            if (Head != null)
             {
-                Element t = head;
+                Element t = Head;
 
                 while (t != null)
                 {
@@ -120,21 +121,21 @@ namespace ClassLibrary
         /// <param name="a">Значение элемента</param>
         public void AddToBegin(T a)
         {
-            if (head == null)
+            if (Head == null)
             {
                 Element newElement = new Element(a);
-                head = newElement;
-                last = head;
+                Head = newElement;
+                Last = Head;
             }
 
             else
             {
                 Element newElement = new Element(a)
                 {
-                    Next = head
+                    Next = Head
                 };
-                head.Previous = newElement;
-                head = newElement;
+                Head.Previous = newElement;
+                Head = newElement;
             }
         }
 
@@ -144,21 +145,21 @@ namespace ClassLibrary
         /// <param name="a">Значение элемента</param>
         public void AddToEnd(T a)
         {
-            if (head == null)
+            if (Head == null)
             {
                 Element newElement = new Element(a);
-                head = newElement;
-                last = head;
+                Head = newElement;
+                Last = Head;
             }
 
             else
             {
                 Element newElement = new Element(a)
                 {
-                    Previous = last
+                    Previous = Last
                 };
-                last.Next = newElement;
-                last = newElement;
+                Last.Next = newElement;
+                Last = newElement;
             }
         }
 
@@ -167,16 +168,24 @@ namespace ClassLibrary
         /// </summary>
         public void OutputConsoleForwardReverseOrder()
         {
-            string reversed = "";
-
-            Console.WriteLine("Прямой порядок:");
-            foreach (T element in this)
+            if (Count == 0)
             {
-                Console.Write(element + "\t");
-                reversed = element + "\t" + reversed;
+                Console.WriteLine("[Список пуст.]");
             }
 
-            Console.WriteLine("\n\nОбратный порядок:\n" + reversed + "\n");
+            else
+            {
+                string reversed = "";
+
+                Console.WriteLine("Прямой порядок:");
+                foreach (T element in this)
+                {
+                    Console.Write(element + "\t");
+                    reversed = element + "\t" + reversed;
+                }
+
+                Console.WriteLine("\n\nОбратный порядок:\n" + reversed + "\n");
+            }
         }
 
         /// <summary>
@@ -186,7 +195,7 @@ namespace ClassLibrary
         /// <returns>true - есть элемент, false - нет элемента</returns>
         public bool IsElement(T a)
         {
-            Element p = head;
+            Element p = Head;
 
             while (p != null)
             {
@@ -208,9 +217,9 @@ namespace ClassLibrary
         /// <returns>Значение элемента</returns>
         public T GetValue(int number)
         {
-            if (head != null)
+            if (Head != null)
             {
-                Element p = head;
+                Element p = Head;
                 int count = 1;
 
                 while ((p.Next != null) && (count != number))
@@ -235,12 +244,12 @@ namespace ClassLibrary
         /// <param name="a">Значение добавляемого элемента</param>
         public void AddBefore(int setNumber, T a)
         {
-            if (head != null)
+            if (Head != null)
             {
 
                 Element newElement = new Element(a);
-                Element p = head;
-                Element q = head.Previous;
+                Element p = Head;
+                Element q = Head.Previous;
 
                 int count = 1;
 
@@ -255,7 +264,7 @@ namespace ClassLibrary
                 {
                     newElement.Next = p;
 
-                    if (p != head)
+                    if (p != Head)
                     {
                         newElement.Previous = q;
                         q.Next = newElement;
@@ -263,7 +272,7 @@ namespace ClassLibrary
 
                     else
                     {
-                        head = newElement;
+                        Head = newElement;
                     }
 
                     p.Previous = newElement;
@@ -276,16 +285,16 @@ namespace ClassLibrary
         }
 
         /// <summary>
-        /// Добавление элемента после заданного
+        /// Добавление элемента после заданного.
         /// </summary>
         /// <param name="setNumber">Номер элемента</param>
         /// <param name="a">Значение добавляемого элемента</param>
         public void AddAfter(int setNumber, T a)
         {
-            if (head != null)
+            if (Head != null)
             {
                 Element newElement = new Element(a);
-                Element p = head;
+                Element p = Head;
 
                 int count = 1;
 
@@ -299,11 +308,12 @@ namespace ClassLibrary
                 {
                     newElement.Next = p.Next;
                     newElement.Previous = p;
+                    p.Next.Previous = newElement;
                     p.Next = newElement;
 
-                    if (p == last)
+                    if (p == Last)
                     {
-                        last = newElement;
+                        Last = newElement;
                     }
 
                     return;
@@ -318,18 +328,18 @@ namespace ClassLibrary
         /// </summary>
         public void DeleteFromBegin()
         {
-            if (head != null)
+            if (Head != null)
             {
-                if (head == last)
+                if (Head == Last)
                 {
-                    head = null;
-                    last = null;
+                    Head = null;
+                    Last = null;
                 }
 
                 else
                 {
-                    head.Next.Previous = null;
-                    head = head.Next;
+                    Head.Next.Previous = null;
+                    Head = Head.Next;
                 }
             }
         }
@@ -339,27 +349,30 @@ namespace ClassLibrary
         /// </summary>
         public void DeleteFromEnd()
         {
-            if (head != null)
+            if (Head != null)
             {
-                if (head == last)
+                if (Head == Last)
                 {
-                    head = null;
-                    last = null;
+                    Head = null;
+                    Last = null;
                 }
 
                 else
                 {
-                    Element p = head;
-                    Element q = p;
+                    //Element p = Head;
+                    //Element q = p;
 
-                    while (p.Next != null)
-                    {
-                        q = p;
-                        p = p.Next;
-                    }
+                    //while (p.Next != null)
+                    //{
+                    //    q = p;
+                    //    p = p.Next;
+                    //}
 
-                    q.Next = null;
-                    last = q;
+                    //q.Next = null;
+                    //Last = q;
+
+                    Last.Previous.Next = null;
+                    Last = Last.Previous;
                 }
             }
         }
@@ -370,9 +383,9 @@ namespace ClassLibrary
         /// <param name="setNumber">Номер элемента</param>
         public void DeleteBefore(int setNumber)
         {
-            if (head != null)
+            if (Head != null)
             {
-                Element p = head;
+                Element p = Head;
 
                 int count = 1;
 
@@ -385,7 +398,7 @@ namespace ClassLibrary
 
                 if (count == setNumber)
                 {
-                    if (p != head)
+                    if (p != Head)
                     {
                         p.Previous = p.Previous.Previous;
 
@@ -396,7 +409,7 @@ namespace ClassLibrary
 
                         else
                         {
-                            head = p;
+                            Head = p;
                         }
                     }
 
@@ -413,9 +426,9 @@ namespace ClassLibrary
         /// <param name="setNumber">Номер элемента</param>
         public void DeleteAfter(int setNumber)
         {
-            if (head != null)
+            if (Head != null)
             {
-                Element p = head;
+                Element p = Head;
 
                 int count = 1;
 
@@ -428,7 +441,7 @@ namespace ClassLibrary
 
                 if (count == setNumber)
                 {
-                    if (p != last)
+                    if (p != Last)
                     {
                         p.Next = p.Next.Next;
                         
@@ -439,7 +452,7 @@ namespace ClassLibrary
 
                         else
                         {
-                            last = p;
+                            Last = p;
                         }
                     }
 
