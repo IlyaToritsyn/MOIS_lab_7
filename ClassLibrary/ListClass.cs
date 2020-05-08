@@ -308,7 +308,12 @@ namespace ClassLibrary
                 {
                     newElement.Next = p.Next;
                     newElement.Previous = p;
-                    p.Next.Previous = newElement;
+
+                    if (p.Next != null)
+                    {
+                        p.Next.Previous = newElement;
+                    }
+
                     p.Next = newElement;
 
                     if (p == Last)
